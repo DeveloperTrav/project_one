@@ -1,0 +1,25 @@
+form(action=(todoItem ? '/todoItems/update' : "/todoItems"), method="POST")
+    if todoItem
+        input(type="hidden", name="id", value=todoItem.id)
+
+    .form-group
+        label Name
+        input.form-control(name="todoItem[name]", required, value=(todoItem ? todoItem.name : null))
+
+    .form-group
+        label Description
+        input.form-control(name="todoItem[description]", required, value=(todoItem ? todoItem.description : null))
+
+    .form-group
+        label Due Date
+        input.form-control(type='date' name="todoItem[dueDate]", required, value=(todoItem ? todoItem.dueDate : null))
+
+    .form-group
+        label Priority
+        select.form-control(name="todoItem[priority]", required)
+            each priority in ["Low priority", "Medium priority", "High priority"]
+                option(value=priority, selected=(todoItem && todoItem.priority === priority))
+                    = priority.toLowerCase()
+
+    .form-group
+        input.btn.btn-dark(type="submit", value="submit")

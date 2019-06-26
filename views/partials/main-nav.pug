@@ -1,0 +1,12 @@
+nav.navbar.fixed-top.navbar-expand-lg.navbar-dark.bg-dark
+    a.navbar-brand(href='/') TJ&D Todo List
+    button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+
+    #navbarSupportedContent.collapse.navbar-collapse
+        ul.navbar-nav.mr-auto
+            li.nav-item.dropdown
+                a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false') Todo List
+                .dropdown-menu
+                    a.dropdown-item(href='/todoItems') Todo List
+                    a.dropdown-item(href='/todoItems/new') Add New Item

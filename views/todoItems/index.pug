@@ -1,0 +1,35 @@
+extends ../layouts/main.pug
+block content
+    .container
+        header
+            h1= title
+
+        div
+            table.table.table-striped
+                thead
+                    tr
+                        th Name
+                        th Description
+                        th Due Date
+                        th priority
+                        th Actions
+
+                tbody
+                    each todoItem in todoItems
+                        tr
+                            td
+                                a(href=`/todoItems/${todoItem.id}`)= todoItem.name
+                            td
+                                a(href=`/todoItems/${todoItem.id}`)= todoItem.description
+                            td
+                                a(href=`/todoItems/${todoItem.id}`)= todoItem.dueDate
+                            td
+                                a(href=`/todoItems/${todoItem.id}`)= todoItem.priority
+                            td
+                                form.edit(action=`/todoItems/${todoItem.id}/edit`, methods="POST")
+                                    input(type="hidden", name="id", value=`${todoItem.id}`)
+                                    input.edit(type="submit", value="edit")
+
+                                form.destroy(action=`/todoItems/destroy`, method="POST", onsubmit='return confirm("Are you sure you wish to remove this item?")')
+                                    input(type="hidden", name="id", value=`${todoItem.id}`)
+                                    input.destroy(type="submit", value="destroy")
