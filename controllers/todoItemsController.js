@@ -23,11 +23,14 @@ exports.index = (req, res) => {
 
 
 exports.show = (req, res) => {
-    item.findById(req.params.id)
-        .then(todoItem => {
+
+    item.findOne({
+        _id: req.params.id,
+    })
+        .then(item => {
             res.render('todoItems/show', {
-                title: "Todo Items Show",
-                todoItem: todoItem
+                item: item,
+                title: item.title
             });
         })
         .catch(err => {
@@ -47,7 +50,7 @@ exports.create = async (req, res) => {
 
             req.flash('error', `ERROR: ${err}`);
             res.render('todoItems/new', {
-                metaHuman: req.body.todoItem,
+                todoItem: req.body.todoItem,
                 title: 'New Item'
             });
         });

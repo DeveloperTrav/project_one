@@ -20,11 +20,11 @@ block content
                             td
                                 a(href=`/todoItems/${todoItem.id}`)= todoItem.name
                             td
-                                a(href=`/todoItems/${todoItem.id}`)= todoItem.description
+                                = todoItem.description
                             td
-                                a(href=`/todoItems/${todoItem.id}`)= todoItem.dueDate
+                                = todoItem.dueDate
                             td
-                                a(href=`/todoItems/${todoItem.id}`)= todoItem.priority
+                                = todoItem.priority
                             td
                                 form.edit(action=`/todoItems/${todoItem.id}/edit`, methods="POST")
                                     input(type="hidden", name="id", value=`${todoItem.id}`)
