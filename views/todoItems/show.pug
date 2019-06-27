@@ -2,7 +2,22 @@ extends ../layouts/main.pug
 block content
     .container
         header
-            h1= `Showing item number ${todoItem.title}`
+            h1= `Showing Item: ${item.name}`
+
 
         div
-            = todoItem.content
+            table.table
+                tr
+                  th.th-main= "Item Name"
+                  td.td-show= item.name
+                tr
+                  th.th-main= "Item Description"
+                  td.td-show= item.description
+                tr
+                  th.th-main= "Item Due Date"
+                  td.td-show= item.dueDate
+                tr
+                  th.th-main= "Item Priority"
+                  td.td-show= item.priority
+
+

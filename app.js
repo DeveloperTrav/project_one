@@ -16,6 +16,23 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
+
+//Authentication helper
+const isAuthenticated = (req) => {
+    return req.session && req.session.userId;
+};
+app.use((req, res, next) => {
+    req.isAuthenticated = () => {
+        if (!isAuthenticated(req)) {
+            req.flash('error', `You are not permitted to do this action.`);
+            res.redirect('/');
+        }
+    };
+
+    res.locals.isAuthenticated = isAuthenticated(req);
+    next();
+});
+
 app.use(cookieParser());
 app.use(session({
     secret: (process.env.secret || 'boorakacha'),

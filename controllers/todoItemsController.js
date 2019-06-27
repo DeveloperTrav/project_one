@@ -8,6 +8,8 @@ exports.new = (req,res) => {
 };
 
 exports.index = (req, res) => {
+    req.isAuthenticated();
+
     item.find()
         .then(todoItems => {
             res.render('todoItems/index', {
@@ -23,11 +25,15 @@ exports.index = (req, res) => {
 
 
 exports.show = (req, res) => {
-    item.findById(req.params.id)
-        .then(todoItem => {
+    req.isAuthenticated();
+
+    item.findOne({
+        _id: req.params.id,
+    })
+        .then(item => {
             res.render('todoItems/show', {
-                title: "Todo Items Show",
-                todoItem: todoItem
+                item: item,
+                title: item.title
             });
         })
         .catch(err => {
@@ -37,6 +43,9 @@ exports.show = (req, res) => {
 };
 
 exports.create = async (req, res) => {
+    req.isAuthenticated();
+
+    req.body.todoItem.user = req.session.userId;
     item.create(req.body.todoItem)
         .then(() => {
             req.flash('success', 'Your new item was added to your todo list!');
@@ -47,13 +56,15 @@ exports.create = async (req, res) => {
 
             req.flash('error', `ERROR: ${err}`);
             res.render('todoItems/new', {
-                metaHuman: req.body.todoItem,
+                todoItem: req.body.todoItem,
                 title: 'New Item'
             });
         });
 };
 
 exports.edit = (req, res) => {
+    req.isAuthenticated();
+
     item.findById(req.params.id)
         .then(todoItem => {
             res.render('todoItems/edit', {
@@ -68,6 +79,8 @@ exports.edit = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    req.isAuthenticated();
+
     item.updateOne({
         _id: req.body.id
     }, req.body.todoItem, {
@@ -87,6 +100,8 @@ exports.update = (req, res) => {
 };
 
 exports.destroy = (req, res) => {
+    req.isAuthenticated();
+
     item.deleteOne({
         _id: req.body.id
     })

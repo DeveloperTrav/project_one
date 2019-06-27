@@ -10,3 +10,12 @@ nav.navbar.fixed-top.navbar-expand-lg.navbar-dark.bg-dark
                 .dropdown-menu
                     a.dropdown-item(href='/todoItems') Todo List
                     a.dropdown-item(href='/todoItems/new') Add New Item
+            li.nav-item
+                form.nav-destroy(action=`/users/new`, method="GET")
+                    input.destroy(type="submit", value="Register")
+            li.nav-item
+                form.nav-destroy(action=`/login`, method="GET")
+                    input.destroy(type="submit", value="Login")
+            li.nav-item
+                form.nav-destroy(action=`/logout`, method="POST")
+                    input.destroy(type="submit", value="Logout")

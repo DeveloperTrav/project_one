@@ -20,6 +20,12 @@ const TodoItemSchems = new mongoose.Schema({
         type: String,
         enum: ["High priority", "Medium priority", "Low priority"],
         default: "Low priority"
+    },
+
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 });
 
