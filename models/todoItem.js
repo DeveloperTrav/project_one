@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
-const TodoItemSchems = new mongoose.Schema({
+const TodoItemSchema = new mongoose.Schema({
+    title: {
+      type: String,
+      required: true
+    },
+
     name: {
         type: String,
         required: true
@@ -29,4 +34,4 @@ const TodoItemSchems = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("TodoItem", TodoItemSchems);
+module.exports = mongoose.model("TodoItem", TodoItemSchema);

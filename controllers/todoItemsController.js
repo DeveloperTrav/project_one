@@ -1,20 +1,25 @@
-const item = require("../models/todoItem");
+const Item = require("../models/todoItem");
 const mongoose = require("mongoose");
 
 exports.new = (req,res) => {
+    req.isAuthenticated();
+
     res.render("todoItems/new", {
         title: "New todo item"
-    })
+    });
 };
 
 exports.index = (req, res) => {
     req.isAuthenticated();
 
-    item.find()
+    Item.find({
+        user: req.session.userId
+    })
+        .populate('user')
         .then(todoItems => {
             res.render('todoItems/index', {
-                todoItems: todoItems,
-                title: 'Todo Items'
+                title: 'Archive',
+                todoItems: todoItems
             });
         })
         .catch(err => {
@@ -27,33 +32,33 @@ exports.index = (req, res) => {
 exports.show = (req, res) => {
     req.isAuthenticated();
 
-    item.findOne({
+    Item.findOne({
         _id: req.params.id,
+        user: req.session.userId
     })
         .then(item => {
             res.render('todoItems/show', {
-                item: item,
-                title: item.title
+                title: item.title,
+                Item: item
             });
         })
         .catch(err => {
             req.flash('error', `ERROR: ${err}`);
-            res.redirect('/');
+            res.redirect('/todoItems');
         });
 };
 
-exports.create = async (req, res) => {
+exports.create = (req, res) => {
     req.isAuthenticated();
 
     req.body.todoItem.user = req.session.userId;
-    item.create(req.body.todoItem)
+    req.body.todoItem.title = "Todo Item";
+    Item.create(req.body.todoItem)
         .then(() => {
-            req.flash('success', 'Your new item was added to your todo list!');
-            res.redirect('/');
+            req.flash('success', `Your new item was added to your todo list! ${req.body.todoItem.title}`);
+            res.redirect('/todoItems');
         })
         .catch(err => {
-            console.log(err);
-
             req.flash('error', `ERROR: ${err}`);
             res.render('todoItems/new', {
                 todoItem: req.body.todoItem,
@@ -65,36 +70,40 @@ exports.create = async (req, res) => {
 exports.edit = (req, res) => {
     req.isAuthenticated();
 
-    item.findById(req.params.id)
-        .then(todoItem => {
+    Item.findOne({
+        _id: req.params.id,
+        user: req.session.userId
+    })
+        .then(item => {
             res.render('todoItems/edit', {
-                title: `Edit ${todoItem.title}`,
-                todoItem: todoItem
+                title: `Edit ${item.title}`,
+                todoItem: item
             });
         })
         .catch(err => {
             req.flash('error', `ERROR: ${err}`);
-            res.redirect('/');
+            res.redirect('/todoItems');
         });
 };
 
 exports.update = (req, res) => {
     req.isAuthenticated();
 
-    item.updateOne({
-        _id: req.body.id
+    Item.updateOne({
+        _id: req.body.id,
+        user: req.session.userId
     }, req.body.todoItem, {
         runValidators: true
     })
         .then(() => {
-            req.flash('success', 'Your item was updated todo list +successfully.');
-            res.redirect('/');
+            req.flash('success', 'Your item was updated todo list successfully.');
+            res.redirect('/todoItems');
         })
         .catch(err => {
             req.flash('error', `ERROR: ${err}`);
             res.render('todoItems/edit', {
                 todoItem: req.body.todoItem,
-                title: `Edit ${req.body.todoItem.name}`
+                title: `Edit ${req.body.todoItem.title}`
             });
         });
 };
@@ -102,8 +111,9 @@ exports.update = (req, res) => {
 exports.destroy = (req, res) => {
     req.isAuthenticated();
 
-    item.deleteOne({
-        _id: req.body.id
+    Item.deleteOne({
+        _id: req.body.id,
+        user: req.session.userId
     })
         .then(() => {
             req.flash('success', 'Your item was removed from your todo list successfully.');

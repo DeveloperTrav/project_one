@@ -17,12 +17,13 @@ exports.authenticate = (req, res) => {
         email: req.body.email
     })
         .then(user => {
+            if (!user) throw new Error('ERROR: Your credentials do not match');
+
             user.authenticate(req.body.password, (err, isMatch) => {
                 if (err) throw new Error(err);
 
                 if (isMatch) {
                     req.session.userId = user.id;
-
                     req.flash('success', 'You are logged in.');
                     res.redirect('/todoItems');
                 } else {

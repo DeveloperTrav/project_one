@@ -12,7 +12,7 @@ form(action=(todoItem ? '/todoItems/update' : "/todoItems"), method="POST")
 
     .form-group
         label Due Date
-        input.form-control(type='date' name="todoItem[dueDate]", required, value=(todoItem ? todoItem.dueDate : null))
+        input.form-control(type='date', name="todoItem[dueDate]", required, value=(todoItem ? todoItem.dueDate : null))
 
     .form-group
         label Priority
