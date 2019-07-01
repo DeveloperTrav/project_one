@@ -48,7 +48,7 @@ exports.show = (req, res) => {
         });
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
     req.isAuthenticated();
 
     req.body.todoItem.user = req.session.userId;

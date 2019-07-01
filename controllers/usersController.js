@@ -7,7 +7,7 @@ exports.new = (req, res) => {
 };
 
 
-exports.create = async (req, res) => {
+exports.create = (req, res) => {
     User.create(req.body.user)
         .then(() => {
             req.flash('success', 'Your are now registered.');
