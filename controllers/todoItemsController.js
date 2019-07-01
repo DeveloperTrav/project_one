@@ -18,8 +18,8 @@ exports.index = (req, res) => {
         .populate('user')
         .then(todoItems => {
             res.render('todoItems/index', {
-                title: 'Archive',
-                todoItems: todoItems
+                todoItems: todoItems,
+                title: 'Archive'
             });
         })
         .catch(err => {
