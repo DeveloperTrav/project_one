@@ -12,7 +12,7 @@ exports.logout = (req, res) => {
     res.redirect('/');
 };
 
-exports.authenticate = (req, res) => {
+exports.authenticate = async (req, res) => {
     User.findOne({
         email: req.body.email
     })
