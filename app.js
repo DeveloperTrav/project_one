@@ -13,25 +13,11 @@ const express = require('express');
 
 const app = express();
 
+const path = require('path');
+
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
-
-//Authentication helper
-const isAuthenticated = (req) => {
-    return req.session && req.session.userId;
-};
-app.use((req, res, next) => {
-    req.isAuthenticated = () => {
-        if (!isAuthenticated(req)) {
-            req.flash('error', `You are not permitted to do this action.`);
-            res.redirect('/');
-        }
-    };
-
-    res.locals.isAuthenticated = isAuthenticated(req);
-    next();
-});
 
 app.use(cookieParser());
 app.use(session({
@@ -52,9 +38,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// This maintains our home path
-const path = require('path');
-
 // Body parser which will make reading request bodies MUCH easier
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -68,7 +51,24 @@ app.use('/css', express.static('assets/stylesheets'));
 app.use('/js', express.static('assets/javascripts'));
 app.use('/images', express.static('assets/images'));
 
+//Authentication helper
+const isAuthenticated = (req) => {
+    return req.session && req.session.userId;
+};
+app.use((req, res, next) => {
+    req.isAuthenticated = () => {
+        if (!isAuthenticated(req)) {
+            req.flash('error', `You are not permitted to do this action.`);
+            res.redirect('/');
+        }
+    };
+
+    res.locals.isAuthenticated = isAuthenticated(req);
+    next();
+});
+
 const routes = require('./routes.js');
 app.use('/', routes);
 
-app.listen((process.env.PORT || 4000), () => console.log('Listening on 4000'));
+const port = (process.env.PORT || 4000);
+app.listen(port, () => console.log(`Listening on ${port}`));
