@@ -24,10 +24,11 @@ exports.authenticate = (req, res) => {
 
                 if (isMatch) {
                     req.session.userId = user.id;
-                    req.flash('success', 'You are logged in.');
+
+                    req.flash('success', 'You are now logged in.');
                     res.redirect('/todoItems');
                 } else {
-                    req.flash('error', `ERROR: Your credentials do not match.`);
+                    req.flash('error', 'ERROR: Your credentials do not match');
                     res.redirect('/login');
                 }
             });
@@ -36,4 +37,10 @@ exports.authenticate = (req, res) => {
             req.flash('error', `ERROR: ${err}`);
             res.redirect('/login');
         });
+};
+
+exports.logout = (req, res) => {
+    req.session.userId = null;
+    req.flash('success', 'You are now logged out');
+    res.redirect('/');
 };
