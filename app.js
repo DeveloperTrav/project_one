@@ -52,15 +52,27 @@ app.use('/js', express.static('assets/javascripts'));
 app.use('/images', express.static('assets/images'));
 
 //Authentication helper
+const jwt = require('jsonwebtoken');
 const isAuthenticated = (req) => {
-    return req.session && req.session.userId;
+    const token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
+
+    if (req.session.userId) return true;
+
+    if (!token) {
+        return false;
+    } else {
+        jwt.verify(token, "bobthebuilder", function (err, decoded) {
+            if (err) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+    }
 };
 app.use((req, res, next) => {
     req.isAuthenticated = () => {
-        if (!isAuthenticated(req)) {
-            req.flash('error', `You are not permitted to do this action.`);
-            res.redirect('/');
-        }
+        return isAuthenticated(req);
     };
 
     res.locals.isAuthenticated = isAuthenticated(req);
@@ -68,7 +80,16 @@ app.use((req, res, next) => {
 });
 
 const routes = require('./routes.js');
-app.use('/', routes);
+app.use('/api', routes);
+
+//Handles request not defined in node js server
+const root = path.join(__dirname, '/client/build');
+app.use(express.static(root));
+app.use((req, res, next) => {
+    if (req.method === "GET" && req.accepts('html') && req.is('json') && !req.path.includes('.')) {
+        res.sendfile('index.html', { root });
+    } else next();
+});
 
 const port = (process.env.PORT || 4000);
 app.listen(port, () => console.log(`Listening on ${port}`));

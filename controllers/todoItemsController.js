@@ -1,111 +1,51 @@
 const Item = require("../models/todoItem");
-const mongoose = require("mongoose");
-
-exports.new = (req,res) => {
-    req.isAuthenticated();
-
-    res.render("todoItems/new", {
-        title: "New todo item"
-    });
-};
 
 exports.index = (req, res) => {
-    req.isAuthenticated();
+    if (!req.isAuthenticated()) return res.status(404).send({ error: "Not authenticated" });
 
     Item.find({
         user: req.session.userId
     })
         .populate('user')
-        .then(todoItems => {
-            res.render('todoItems/index', {
-                todoItems: todoItems,
-                title: 'Archive'
-            });
-        })
-        .catch(err => {
-            req.flash('error', `ERROR: ${err}`);
-            res.redirect('/');
-        });
+        .then(todoItems => res.json(todoItems))
+        .catch(err => res.status(404).send(err));
 };
 
 
 exports.show = (req, res) => {
-    req.isAuthenticated();
+    if (!req.isAuthenticated()) return res.status(404).send({ error: "Not authenticated" });
 
     Item.findOne({
         _id: req.params.id,
         user: req.session.userId
     })
-        .then(item => {
-            res.render('todoItems/show', {
-                title: item.title,
-                Item: item
-            });
-        })
-        .catch(err => {
-            req.flash('error', `ERROR: ${err}`);
-            res.redirect('/todoItems');
-        });
+        .then(item => res.json(item))
+        .catch(err => res.json(err));
 };
 
 exports.create = async (req, res) => {
-    req.isAuthenticated();
+    if (!req.isAuthenticated()) return res.status(404).send({ error: "Not authenticated" });
 
     req.body.todoItem.user = req.session.userId;
-    req.body.todoItem.title = "Todo Item";
+
+    console.log(req.body);
+
     Item.create(req.body.todoItem)
-        .then(() => {
-            req.flash('success', `Your new item was added to your todo list! ${req.body.todoItem.title}`);
-            res.redirect('/todoItems');
-        })
-        .catch(err => {
-            req.flash('error', `ERROR: ${err}`);
-            res.render('todoItems/new', {
-                todoItem: req.body.todoItem,
-                title: 'New Item'
-            });
-        });
-};
-
-exports.edit = (req, res) => {
-    req.isAuthenticated();
-
-    Item.findOne({
-        _id: req.params.id,
-        user: req.session.userId
-    })
-        .then(item => {
-            res.render('todoItems/edit', {
-                title: `Edit ${item.title}`,
-                todoItem: item
-            });
-        })
-        .catch(err => {
-            req.flash('error', `ERROR: ${err}`);
-            res.redirect('/todoItems');
-        });
+        .then(() => res.json({ success: "New item added to list." }))
+        .catch(err => res.json(err));
 };
 
 exports.update = (req, res) => {
-    req.isAuthenticated();
+    if (!req.isAuthenticated()) return res.status(404).send({ error: "Not authenticated" });
 
     Item.updateOne({
         _id: req.body.id,
-        user: req.session.userId
+        author: req.session.userId
     }, req.body.todoItem, {
         runValidators: true
     })
-        .then(() => {
-            req.flash('success', 'Your item was updated todo list successfully.');
-            res.redirect('/todoItems');
-        })
-        .catch(err => {
-            req.flash('error', `ERROR: ${err}`);
-            res.render('todoItems/edit', {
-                todoItem: req.body.todoItem,
-                title: `Edit ${req.body.todoItem.title}`
-            });
-        });
+        .then(() => res.json({ success: "Item has been updated" }))
+        .catch(err => res.json(err));
 };
 
 exports.destroy = (req, res) => {
@@ -123,5 +63,16 @@ exports.destroy = (req, res) => {
             req.flash('error', `ERROR: ${err}`);
             res.redirect('/todoItems');
         });
+};
+
+exports.destroy = (req, res) => {
+    if (!req.isAuthenticated()) return res.status(404).send({ error: "Not authenticated" });
+
+    Item.deleteOne({
+        _id: req.body.id,
+        user: req.session.userId
+    })
+        .then(() => res.json({ success: "Item deleted" }))
+        .catch(err => res.json(err));
 };
 
