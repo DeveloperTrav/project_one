@@ -8,10 +8,14 @@ exports.login = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    if (!req.isAuthenticated()) res.status(404).send({ error: "Couldn't authenticate request" });
+    if (!req.isAuthenticated())
+        res.status(401).send({ error: "Could not authenticate request" });
 
     req.session.userId = null;
-    res.clearCookie('token').status(200).send({ success: "You are now logged out" });
+    res
+        .clearCookie("token")
+        .status(200)
+        .send({ success: "Your are now logged out" });
 };
 
 exports.authenticate = async (req, res) => {

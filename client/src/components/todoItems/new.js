@@ -10,6 +10,11 @@ const options = ['Low priority', 'Medium priority', 'High priority'];
 function New() {
     const [inputs, setInputs] = useState({});
     const [redirect, setRedirect] = useState(false);
+    const [startDate, setStartDate] = useState(new Date());
+
+    const handleChange = date => {
+        setStartDate(date);
+    };
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -71,7 +76,10 @@ function New() {
 
                     <div className="form-group">
                         <label>Due Date</label>
-                        <DatePicker selected={this.state.date} onChange={handleInputChange} name="dueDate"/>
+                        <DatePicker
+                            selected={startDate}
+                            onChange={handleChange}
+                        />
                     </div>
 
                     <div className="form-group">

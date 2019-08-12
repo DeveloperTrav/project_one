@@ -3,10 +3,17 @@ import { Redirect } from "react-router-dom";
 import Axios from "axios";
 import DatePicker from "react-datepicker/es";
 import Dropdown from "react-dropdown";
+import 'react-dropdown/style.css';
+const options = ['Low priority', 'Medium priority', 'High priority'];
 
 function Edit(props) {
     const [inputs, setInputs] = useState({});
     const [redirect, setRedirect] = useState(false);
+    const [startDate, setStartDate] = useState(new Date());
+
+    const handleChange = date => {
+        setStartDate(date);
+    };
 
     useEffect(() => {
         Axios.get(`/api/todoItems/${props.match.params.id}`)
@@ -84,7 +91,10 @@ function Edit(props) {
 
                     <div className="form-group">
                         <label>Due Date</label>
-                        <DatePicker selected={this.state.date} onChange={handleInputChange} name="dueDate" defaultValue={inputs.dueDate}/>
+                        <DatePicker
+                            selected={startDate}
+                            onChange={handleChange}
+                        />
                     </div>
 
                     <div className="form-group">
