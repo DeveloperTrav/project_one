@@ -52,24 +52,20 @@ app.use('/js', express.static('assets/javascripts'));
 app.use('/images', express.static('assets/images'));
 
 //Authentication helper
-const jwt = require('jsonwebtoken');
-const isAuthenticated = (req) => {
-    const token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
+const jwt = require("jsonwebtoken");
+const isAuthenticated = req => {
+    const token =
+        (req.cookies && req.cookies.token) || (req.body && req.body.token) || (req.query && req.query.token) || (req.headers && req.headers["x-access-token"]);
 
     if (req.session.userId) return true;
+    if (!token) return false;
 
-    if (!token) {
-        return false;
-    } else {
-        jwt.verify(token, "bobthebuilder", function (err, decoded) {
-            if (err) {
-                return false;
-            } else {
-                return true;
-            }
-        });
-    }
+    jwt.verify(token, "doratheexplora", function(err, decoded) {
+        if (err) return false;
+        return true;
+    });
 };
+
 app.use((req, res, next) => {
     req.isAuthenticated = () => {
         return isAuthenticated(req);

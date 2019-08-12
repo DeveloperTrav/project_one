@@ -3,12 +3,10 @@ const Item = require("../models/todoItem");
 exports.index = (req, res) => {
     if (!req.isAuthenticated()) return res.status(404).send({ error: "Not authenticated" });
 
-    Item.find({
-        user: req.session.userId
-    })
-        .populate('user')
+    Item.find()
+        .populate("author")
         .then(todoItems => res.json(todoItems))
-        .catch(err => res.status(404).send(err));
+        .catch(err => res.status(404).json(err));
 };
 
 
@@ -33,6 +31,18 @@ exports.create = async (req, res) => {
     Item.create(req.body.todoItem)
         .then(() => res.json({ success: "New item added to list." }))
         .catch(err => res.json(err));
+};
+
+exports.edit = (req, res) => {
+    if (!req.isAuthenticated())
+        return res.status(401).send({ error: "Not Authenticated" });
+
+    Item.findOne({
+        _id: req.params.id,
+        user: req.session.userId
+    })
+        .then(todoItem => res.send(todoItem))
+        .catch(err => res.status(404).send(err));
 };
 
 exports.update = (req, res) => {
